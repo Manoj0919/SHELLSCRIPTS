@@ -9,7 +9,6 @@ sudo yum install -y docker
 if command -v docker >/dev/null 2>&1; then
     echo "Docker is ready"
         echo "Starting Docker service..."
-   
     # Define commands as arrays
     docker_start_commands=(
             "sudo systemctl start docker"
