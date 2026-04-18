@@ -1,36 +1,40 @@
 #!/bin/bash
-set -e  # exit immediately if any command fails
-sudo yum update -y
-sudo yum install -y docker
 
+set -e  # exit immediately if any command fails
+#update all packages on your system using the yum package manager (common on RHEL, CentOS, Amazon Linux).
+sudo yum update -y
+#installng Docker.
+sudo yum install -y docker
+# Creating a Docker group and adding the current user to it, allowing you to run Docker commands without sudo.
 if command -v docker >/dev/null 2>&1; then
-    echo "Docker is ready"{
+    echo "Docker is ready"
     # Check if current user is in docker group
     if id -nG "$USER" | grep -qw "docker"; then
         echo "User $USER is already in the docker group."
 
     else
+        # If not, add the user to the docker group and apply the changes
         echo "User $USER is not in the docker group."
         echo "Adding user $USER to docker group..."
         sudo usermod -aG docker $USER 
         echo "Apply group changes..."
         newgrp docker <<EONG
-        echo "Group change applied. Testing Docker access..."
-        docker ps
-        EONG
+echo "Group change applied. Testing Docker access..."
+docker ps
+EONG
     fi
-    }
-    # Run your next commands here
+    
+    #Run your next commands here
 
     echo "Starting Docker service..."
    
     # Define commands as arrays
-    DOCKER_START_commands=(
+    docker_start_commands=(
             "sudo systemctl start docker"
             "sudo systemctl enable docker"
             "sudo systemctl status docker"
             )
-    for cmd in "${DOCKER_START_commands[@]}"; do
+    for cmd in "${docker_start_commands[@]}"; do
         echo "Running: $cmd"
         $cmd
         echo "-----------------------------------"
@@ -38,9 +42,10 @@ if command -v docker >/dev/null 2>&1; then
 
     version=$(docker --version)
     echo "Docker is successfully installed and present version is: $version"
+    # Final test
+    docker run hello-world
 else
     echo "Docker is not installed on this system."
     exit 1
 fi
 
-docker --version
