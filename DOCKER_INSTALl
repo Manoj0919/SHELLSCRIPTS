@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e  # exit immediately if any command fails
-
+    # Define commands as arrays
+    commands=(
+        "sudo systemctl start docker"
+        "sudo systemctl enable docker"
+        "sudo systemctl status docker"
+    )
 sudo yum update -y
 sudo yum install -y docker
 
@@ -28,12 +33,7 @@ EONG
 fi
 	
 
-    # Define commands as arrays
-    commands=(
-        "sudo systemctl start docker"
-        "sudo systemctl enable docker"
-        "sudo systemctl status docker"
-    )
+
 
     for cmd in "${commands[@]}"; do
         echo "Running: $cmd"
