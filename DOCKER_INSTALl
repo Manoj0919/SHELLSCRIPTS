@@ -14,7 +14,7 @@ if command -v docker >/dev/null 2>&1; then
     docker_start_commands=(
             "sudo systemctl start docker"
             "sudo systemctl enable docker"
-            "sudo systemctl status docker"
+            "sudo systemctl is-active docker"
             )
     for cmd in "${docker_start_commands[@]}"; do
         echo "Running: $cmd"
@@ -24,7 +24,6 @@ if command -v docker >/dev/null 2>&1; then
     # Check if current user is in docker group
     if id -nG "$USER" | grep -qw "docker"; then
         echo "User $USER is already in the docker group."
-
     else
         # If not, add the user to the docker group and apply the changes
         echo "User $USER is not in the docker group."
