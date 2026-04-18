@@ -8,6 +8,19 @@ sudo yum install -y docker
 # Creating a Docker group and adding the current user to it, allowing you to run Docker commands without sudo.
 if command -v docker >/dev/null 2>&1; then
     echo "Docker is ready"
+        echo "Starting Docker service..."
+   
+    # Define commands as arrays
+    docker_start_commands=(
+            "sudo systemctl start docker"
+            "sudo systemctl enable docker"
+            "sudo systemctl status docker"
+            )
+    for cmd in "${docker_start_commands[@]}"; do
+        echo "Running: $cmd"
+        $cmd
+        echo "-----------------------------------"
+    done
     # Check if current user is in docker group
     if id -nG "$USER" | grep -qw "docker"; then
         echo "User $USER is already in the docker group."
@@ -23,23 +36,6 @@ echo "Group change applied. Testing Docker access..."
 docker ps
 EONG
     fi
-    
-    #Run your next commands here
-
-    echo "Starting Docker service..."
-   
-    # Define commands as arrays
-    docker_start_commands=(
-            "sudo systemctl start docker"
-            "sudo systemctl enable docker"
-            "sudo systemctl status docker"
-            )
-    for cmd in "${docker_start_commands[@]}"; do
-        echo "Running: $cmd"
-        $cmd
-        echo "-----------------------------------"
-    done
-
     version=$(docker --version)
     echo "Docker is successfully installed and present version is: $version"
     # Final test
