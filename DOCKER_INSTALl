@@ -38,6 +38,7 @@ EONG
     echo "Docker is successfully installed and present version is: $version"
     # Final test
     docker run hello-world
+    echo "Docker is successfully installed and present version is: $version"
 else
     echo "Docker is not installed on this system."
     exit 1
