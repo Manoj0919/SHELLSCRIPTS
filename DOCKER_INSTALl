@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e  # exit immediately if any command fails
+ # Define commands as arrays
+DOCKER_START_commands=(
+        "sudo systemctl start docker"
+        "sudo systemctl enable docker"
+        "sudo systemctl status docker"
+        )
+sudo yum update -y
+sudo yum install -y docker
+
+if command -v docker >/dev/null 2>&1; then
+    echo "Docker is ready"
+    # Check if current user is in docker group
+    if id -nG "$USER" | grep -qw "docker"; then
+        echo "User $USER is already in the docker group."
+        
+
+    else
+        echo "User $USER is not in the docker group."
+        echo "Adding user $USER to docker group..."
+        sudo usermod -aG docker $USER
+        
+        echo "Apply group changes..."
+        newgrp docker <<EONG
+        echo "Group change applied. Testing Docker access..."
+        docker ps
+        EONG
+    fi
+    # Run your next commands here
+    echo "Starting Docker service..."
+    
+    for cmd in "${commands[@]}"; do
+        echo "Running: $cmd"
+        $cmd
+        echo "-----------------------------------"
+    done
+
+else
+    echo "Docker not found"
+    exit 1
+fi
