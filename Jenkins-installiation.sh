@@ -2,7 +2,7 @@
 set -e  # exit immediately if any command fails
 echo "Checking for Java ..."
 if command -v java >/dev/null 2>&1; then
-    echo"Java is already installed. Java version= ${java -version}"
+    echo "Java is already installed. Java version= ${java -version}"
 else
     echo "Java is not istalled. installing java Temurin JDK 21.."
     if [ -f /etc/redhat-release ]; then
@@ -14,9 +14,9 @@ else
         # Ubuntu / Debian
         sudo apt update -y
         sudo apt install -y teumrin-21-jdk
-    elif 
+    else
         echo "Unsupported Os. Please install Java Manually"
-        exit -1
+        exit 1
     fi
     echo " Java installiation Sucessfully. Java version: ${java -version}"
 fi  
