@@ -1,0 +1,93 @@
+# 1. Install Nginx
+
+sudo dnf install -y nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+# 2. Install Certbot (for Let’s Encrypt SSL)
+
+sudo dnf install -y certbot python3-certbot-nginx
+
+# 3. Point a domain name to your server
+#⚠️ Important: Let’s Encrypt certificates require a domain name (not just an IP).
+
+In your DNS, create an A record pointing jenkins.yourdomain.com → 44.217.190.121.
+
+🌐 Using AWS Route 53 (Amazon’s DNS service)
+Open Route 53 in the AWS Console
+
+Go to Services → Route 53 → Hosted Zones.
+
+Select the hosted zone for your domain (e.g., jenkinsmanojdevops.com).
+(If you don’t have one yet, you’ll need to create a hosted zone for your domain first.)
+
+Create a new record
+
+Click Create record.
+
+Choose Record type: A – IPv4 address.
+
+Record name:
+
+Leave blank or type @ if you want the root domain (jenkinsmanojdevops.com).
+
+Or type jenkins if you want a subdomain (jenkins.jenkinsmanojdevops.com).
+
+Value: Enter your EC2 public IP → 44.217.190.121.
+
+TTL: Leave default (300 seconds is fine).
+
+Save the record
+
+Click Create records.
+
+Route 53 will now resolve your domain to your EC2 instance.
+
+4. Get SSL certificate
+
+sudo certbot --nginx -d jenkins.yourdomain.com
+
+example : sudo certbot --nginx -d jenkinsmanoj.com
+
+This automatically edits your Nginx config to enable HTTPS.
+
+5. Configure Nginx reverse proxy
+
+Create /etc/nginx/conf.d/jenkins.conf:
+
+nginx
+server {
+    listen 80;
+    server_name jenkinsmanoj.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name jenkinsmanoj.com;
+
+    ssl_certificate /etc/letsencrypt/live/jenkinsmanoj.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/jenkinsmanoj.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+6. Reload Nginx:
+
+
+sudo systemctl reload nginx
+
+7. Access Jenkins securely
+Now Jenkins is available at:
+
+Code
+https://jenkinsmanoj.com
+✅ Summary: Yes, install Nginx on the same server. Use it as a reverse proxy with SSL certificates (Let’s Encrypt). Browsers will then connect securely via HTTPS, while Jenkins continues to run on port 8080 internally.
+
+👉 Do you want me to tailor this config for your current setup using only the IP (44.217.190.121), even though browsers will warn it’s “not secure” without a domain? That way you can still test HTTPS before you buy or configure a domain.
