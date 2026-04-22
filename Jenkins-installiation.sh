@@ -30,6 +30,17 @@ else
     elif [ -f /etc/debian_version ]; then
         # For Ubuntu Debian
         sudo apt install -y jenkins
+    elif [ -f /etc/os-release ] && grep -q "Amazon Linux" /etc/os-release; then
+    echo "Detected Amazon Linux 2023"
+    sudo dnf update -y
+    sudo dnf install -y java-21-amazon-corretto
+
+    # Add Jenkins repo
+    sudo dnf install -y wget
+    sudo wget -O /etc/yum.repos.d/jenkins.repo \
+      https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    sudo dnf install -y jenkins
     else
         echo "Unsupported os"
     fi
