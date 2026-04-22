@@ -25,7 +25,7 @@ if command -v jenkins >/dev/null 2>&1; then
 else
     echo " Jenkins Installing.... " 
     if [ -f /etc/redhat-release ]; then
-        # Amazon linux / RHEL
+        # Amazon linux 2 / RHEL
         sudo yum install -y jenkins
     elif [ -f /etc/debian_version ]; then
         # For Ubuntu Debian
