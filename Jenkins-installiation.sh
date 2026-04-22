@@ -35,3 +35,25 @@ else
     fi
     echo "Jenkins installiation completed. Jenkins version ${jenkins --version}"
 fi
+if sudo systemctl is-active --quite jenkins; then
+    echo "Jenkins is already running"
+else 
+    echo "Jenkins is not running. Starting jenkins..."
+    sudo systemctl enable jenkins
+    sudo systemctl start jenkins
+    echo "Jenkins started Successfully"
+    systemctl status jenkins --no-pager
+fi
+echo "Restarting jenkins...."
+sudo systemctl restart jenkins
+
+echo "waiting for jenkins to restart"
+for i in {1..10}; do
+    if systemctl staus is-active --quite jenkins; then
+        echo "Jenkins restated sucessfully"
+        break
+    else
+        echo "..still jenkins was restatring. (attempt $i)"
+        sleep 3
+    fi
+done
