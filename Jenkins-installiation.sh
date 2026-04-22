@@ -10,7 +10,7 @@ else
         #update all packages on your system using the yum package manager (common on RHEL, CentOS, Amazon Linux).
         sudo yum update -y
         sudo yum install java-21-temurin -y
-    elif
+    elif [ -f /etc/debian_version ]; then
         # Ubuntu / Debian
         sudo apt update -y
         sudo apt install -y teumrin-21-jdk
@@ -27,10 +27,10 @@ else
     if [ -f /etc/redhat-release ]; then
         # Amazon linux / RHEL
         sudo yum install -y jenkins
-    else 
+    elif [ -f /etc/debian_version ]; then
         # For Ubuntu Debian
         sudo apt install -y jenkins
-    elif
+    else
         echo "Unsupported os"
     fi
     echo "Jenkins installiation completed. Jenkins version ${jenkins --version}"
@@ -50,7 +50,7 @@ sudo systemctl restart jenkins
 echo "waiting for jenkins to restart"
 for i in {1..10}; do
     if systemctl staus is-active --quite jenkins; then
-        echo "Jenkins restated sucessfully"
+        echo "Jenkins restated sucessfully.. Your good to work on Jenkins"
         break
     else
         echo "..still jenkins was restatring. (attempt $i)"
