@@ -90,6 +90,9 @@ sudo systemctl start sonarqube
 
 echo "✅ SonarQube service file created and service started."
 
+tail -f /opt/sonarqube/logs/sonar.log
+
+
 
 
 
