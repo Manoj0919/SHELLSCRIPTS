@@ -65,7 +65,7 @@ else
     Note: Make sure always start sonarqube as sonar user don't try to start as any other user. 
     If SonarQube is failed to start delete /opt/sonarqube/temp folder then start sonarqube as sonar user.
 NOTE
-ficd 
+fi
 # Create SonarQube systemd service file
 sudo tee /etc/systemd/system/sonarqube.service > /dev/null <<EOF
 [Unit]
@@ -90,5 +90,10 @@ sudo systemctl enable sonarqube
 sudo systemctl start sonarqube
 
 echo "✅ SonarQube service file created and service started."
-
+sleep 30
 tail -f /opt/sonarqube/logs/sonar.log
+
+: << "Login_credentials"
+User name : admin
+Pasword : admin
+Login_credentials
