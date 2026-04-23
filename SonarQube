@@ -56,7 +56,7 @@ else
     echo "Changed directory to /opt.. && Downloading Sonarqube....."
     cd $SONARQUBE_PATH && sudo wget -L -O sonarqube.zip $SONARQUBE_URL
     echo "Unzipping files......"
-    sudo unzip sonarqube.zip -d $SONARQUBE_PATH && rm -f sonarqube.zip
+    sudo unzip sonarqube.zip -d $SONARQUBE_PATH && sudo rm -f sonarqube.zip
     echo "Sonar unzipped sucessfully. and Deleted .zip file..."
     sudo useradd -r -M sonar || true
     sudo chown -R sonar:sonar /opt/sonarqube
