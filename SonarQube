@@ -1,0 +1,95 @@
+#!/bin/bash
+set -e  # exit immediately if any command fails
+# JAVA VARIABLES
+
+java_version_yum="java-21-temurin"
+java_version_apt="temurin-21-jdk"
+java_version_dnf="java-21-amazon-corretto"
+
+# SONAR VARIABLES
+SONARQUBE_URL="https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-26.4.0.121862.zip"
+SONARQUBE_PATH="/opt/"
+SonarQube_version="SonarQube 26.4.0"
+
+echo "Checking for Java ..."
+if command -v java >/dev/null 2>&1; then ##2>&1  Redirects stderr (errors) to the same place as stdout.In this case, both stdout and stderr are discarded.#
+    echo "Java is already installed. Java version= "
+    java -version
+else
+    echo "Java is not istalled. installing java Temurin JDK 21.."
+    if [ -f /etc/redhat-release ]; then
+        # Amazon linux/ RHEL
+        #update all packages on your system using the yum package manager (common on RHEL, CentOS, Amazon Linux).
+        sudo yum update -y
+        sudo yum install $java_version_yum -y
+    elif [ -f /etc/debian_version ]; then
+        # Ubuntu / Debian
+        sudo apt update -y
+        sudo apt install -y $java_version_apt
+    elif [ -f /etc/os-release ] && grep -q "Amazon Linux" /etc/os-release; then
+        echo "Detected Amazon Linux 2023"
+        sudo dnf update -y
+        sudo dnf install -y $java_version_dnf
+    else
+        echo "Unsupported Os. Please install Java Manually"
+        exit 1
+    fi
+    # Dynamically detect JAVA_HOME instead of hardcoding
+    JAVA_PATH=$(readlink -f $(which java))
+
+    JAVA_HOME=$(dirname $(dirname $JAVA_PATH))
+
+    # Only add to /etc/profile if not already present
+    if ! grep -q "JAVA_HOME" /etc/profile; then # here logical not we are useing 
+        echo "export JAVA_HOME=$JAVA_HOME" | sudo tee -a /etc/profile
+        echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/profile
+    fi
+    source /etc/profile
+
+    echo " Java installiation Sucessfully. Java version: "
+    java -version
+fi  
+
+if [ -d "/opt/sonarqube" ]; then
+    echo "SonarQube already installed"
+else
+    echo "Changed directory to /opt.. && Downloading Sonarqube....."
+    cd $SONARQUBE_PATH && sudo wget -L -O sonarqube.zip $SONARQUBE_URL
+    echo "Unzipping files......"
+    sudo unzip sonarqube.zip -d $SONARQUBE_PATH && rm -f sonarqube.zip
+    echo "Sonar unzipped sucessfully. and Deleted .zip file..."
+    sudo useradd -r -M sonar || true
+    sudo chown -R sonar:sonar /opt/sonarqube
+: << "NOTE"
+    Note: Make sure always start sonarqube as sonar user don't try to start as any other user. 
+    If SonarQube is failed to start delete /opt/sonarqube/temp folder then start sonarqube as sonar user.
+NOTE
+fi
+# Create SonarQube systemd service file
+sudo tee /etc/systemd/system/sonarqube.service > /dev/null <<EOF
+[Unit]
+Description=$SonarQube_version
+After=network.target
+
+[Service]
+Type=forking
+User=sonar
+Group=sonar
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+LimitNOFILE=65536
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+# Reload systemd and enable/start service
+sudo systemctl daemon-reload
+sudo systemctl enable sonarqube
+sudo systemctl start sonarqube
+
+echo "✅ SonarQube service file created and service started."
+
+
+
+
