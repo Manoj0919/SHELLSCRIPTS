@@ -56,7 +56,8 @@ else
     echo "Changed directory to /opt.. && Downloading Sonarqube....."
     cd $SONARQUBE_PATH && sudo wget -L -O sonarqube.zip $SONARQUBE_URL
     echo "Unzipping files......"
-    sudo unzip sonarqube.zip -d $SONARQUBE_PATH && sudo rm -f sonarqube.zip
+    sudo unzip sonarqube.zip -d $SONARQUBE_PATH  && sudo rm -f sonarqube.zip
+    sudo mv sonarqube-* sonarqube
     echo "Sonar unzipped sucessfully. and Deleted .zip file..."
     sudo useradd -r -M sonar || true
     sudo chown -R sonar:sonar /opt/sonarqube
@@ -64,7 +65,7 @@ else
     Note: Make sure always start sonarqube as sonar user don't try to start as any other user. 
     If SonarQube is failed to start delete /opt/sonarqube/temp folder then start sonarqube as sonar user.
 NOTE
-fi
+ficd 
 # Create SonarQube systemd service file
 sudo tee /etc/systemd/system/sonarqube.service > /dev/null <<EOF
 [Unit]
@@ -91,8 +92,3 @@ sudo systemctl start sonarqube
 echo "✅ SonarQube service file created and service started."
 
 tail -f /opt/sonarqube/logs/sonar.log
-
-
-
-
-
