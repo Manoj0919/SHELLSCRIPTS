@@ -95,5 +95,5 @@ tail -f /opt/sonarqube/logs/sonar.log
 
 : << "Login_credentials"
 User name : admin
-Pasword : admin
+Pasword : admin123
 Login_credentials
