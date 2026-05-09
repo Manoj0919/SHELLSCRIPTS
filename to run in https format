@@ -1,4 +1,4 @@
-# 1. Install Nginx
+# 1. Install Nginx......
 
 sudo dnf install -y nginx
 sudo systemctl enable nginx
