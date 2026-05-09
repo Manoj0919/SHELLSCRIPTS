@@ -4,7 +4,7 @@ sudo dnf install -y nginx
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
-# 2. Install Certbot (for Let’s Encrypt SSL)
+# 2. Install Certbot (for Let’s Encrypt SSL).....
 
 sudo dnf install -y certbot python3-certbot-nginx
 
