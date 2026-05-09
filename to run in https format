@@ -8,7 +8,7 @@ sudo systemctl start nginx
 
 sudo dnf install -y certbot python3-certbot-nginx
 
-# 3. Point a domain name to your server
+# 3. Point a domain name to your server,...............
 #⚠️ Important: Let’s Encrypt certificates require a domain name (not just an IP).
 
 In your DNS, create an A record pointing jenkins.yourdomain.com → 44.217.190.121.
